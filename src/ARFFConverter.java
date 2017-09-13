@@ -65,6 +65,10 @@ public class ARFFConverter {
     private static String getAttributeInfo(List<String> metadata) {
         StringBuilder formattedAttributes = new StringBuilder();
         formattedAttributes.append(ATTRIBUTE_TAG).append("\n");
+
+        for(String line : metadata) {
+
+        }
         // TODO: Format attributes, set class index
 
         return formattedAttributes.toString();

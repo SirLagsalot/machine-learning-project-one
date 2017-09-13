@@ -7,15 +7,15 @@
 %
 @RELATION tic-tac-toe
 
-@ATTRIBUTE top-left string
-@ATTRIBUTE top-center string
-@ATTRIBUTE top-right string
-@ATTRIBUTE middle-left string
-@ATTRIBUTE middle-center string
-@ATTRIBUTE middle-right string
-@ATTRIBUTE bottom-left string
-@ATTRIBUTE bottom-center string
-@ATTRIBUTE bottom-right string
+@ATTRIBUTE top-left {x,o,b}
+@ATTRIBUTE top-center {x,o,b}
+@ATTRIBUTE top-right {x,o,b}
+@ATTRIBUTE middle-left {x,o,b}
+@ATTRIBUTE middle-center {x,o,b}
+@ATTRIBUTE middle-right {x,o,b}
+@ATTRIBUTE bottom-left {x,o,b}
+@ATTRIBUTE bottom-center {x,o,b}
+@ATTRIBUTE bottom-right {x,o,b}
 @ATTRIBUTE class {positive, negative}
 
 @Data
