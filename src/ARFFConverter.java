@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -12,11 +13,13 @@ public class ARFFConverter {
     private static final String ATTRIBUTE_TAG = "@ATTRIBUTE";
     private static final String DATA_TAG = "@DATA";
     private static final String RELATION_TAG = "@RELATION";
+    private static final String COMMENT_SYMBOL = "% ";
+
     private static int classIndex = -1;
 
     /**
-     * args[1]: Name of dataset
-     * args[2]: List position of classification attribute; {first, last}
+     * args[0]: Name of data set without file extension
+     * args[1]: Output file path
      */
     public static void main(String[] args) {
         File metadataFile = new File(args[0].concat(".metadata"));
@@ -30,10 +33,10 @@ public class ARFFConverter {
 
         String headerInfo = getHeaderInfo(metaDataStream.collect(Collectors.toList()));
         String relationInfo = RELATION_TAG.concat(" " + args[0]);
-        String attributeInfo = getAttributeInfo(metaDataStream);
-        String[] dataInfo = getDataInfo(dataStream);
+        String attributeInfo = getAttributeInfo(metaDataStream.collect(Collectors.toList()));
+        String dataInfo = getDataInfo(dataStream);
 
-        // Write to file
+        writeFile(args[1], headerInfo, relationInfo, attributeInfo, dataInfo);
     }
 
     private static Stream<String> getFileStream(File file) {
@@ -50,7 +53,7 @@ public class ARFFConverter {
 
         for (String line : metadata) {
             if (!line.contains("Attribute")) {
-                headerLines.append("% ".concat(line));
+                headerLines.append(COMMENT_SYMBOL.concat(line));
             } else {
                 break;
             }
@@ -59,30 +62,46 @@ public class ARFFConverter {
         return headerLines.toString();
     }
 
-    private static String getAttributeInfo(Stream<String> metadata) {
-        return "";
+    private static String getAttributeInfo(List<String> metadata) {
+        StringBuilder formattedAttributes = new StringBuilder();
+        formattedAttributes.append(ATTRIBUTE_TAG).append("\n");
+        // TODO: Format attributes, set class index
+
+        return formattedAttributes.toString();
     }
 
-    private static String[] getDataInfo(Stream<String> data) {
-        return data.filter(line -> !line.isEmpty())
-                .map(ARFFConverter::convertLineToARFF)
-                .toArray(String[]::new);
+    private static String getDataInfo(Stream<String> data) {
+        StringBuilder formattedData = new StringBuilder();
+        formattedData.append(DATA_TAG).append("\n");
+        data.forEach(line -> {
+            formattedData.append(convertLineToARFF(line));
+            formattedData.append("\n");
+        });
+        return formattedData.toString();
     }
 
+    /*
+        Lines of data can be either comma, space, or tab separated.
+        Outputs a line formatted as comma separated attribute values followed by the classification
+     */
     private static String convertLineToARFF(String line) {
-        List<String> features = Arrays.asList(line.split(","));
-        // Handle splits for tabs and spaces
-        String classification = features.remove(classIndex);
-        return "";
+        Pattern splitRegex = Pattern.compile(",|\t|\\s");
+        List<String> attributes = Arrays.asList(splitRegex.split(line));
+        String classification = attributes.remove(classIndex);
+
+        StringBuilder arffLine = new StringBuilder();
+        attributes.forEach(attr -> {
+            arffLine.append(attr);
+            arffLine.append(", ");
+        });
+        arffLine.append(classification);
+
+        return arffLine.toString();
     }
 
-    private static File buildArffFile(String fileName, String[] header, String[] data) {
-        return new File(fileName);
-    }
-
-
-    private static void writeFile(String path, String[] lines) {
-        System.out.println(lines[0]);
-        // Create .arff file, write lines to it
+    private static void writeFile(String path, String... fileSections) {
+        for (String section : fileSections) {
+            System.out.println(section);
+        }
     }
 }
