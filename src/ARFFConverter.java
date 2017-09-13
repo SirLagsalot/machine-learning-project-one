@@ -3,6 +3,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -31,9 +32,13 @@ public class ARFFConverter {
         assert metaDataStream != null;
         assert dataStream != null;
 
-        String headerInfo = getHeaderInfo(metaDataStream.collect(Collectors.toList()));
-        String relationInfo = RELATION_TAG.concat(" " + args[0]);
-        String attributeInfo = getAttributeInfo(metaDataStream.collect(Collectors.toList()));
+        String[] dataSetPath = args[0].split("/");
+        String datSetName = dataSetPath[dataSetPath.length -1];
+
+        List<String> metadataList = metaDataStream.collect(Collectors.toList());
+        String headerInfo = getHeaderInfo(metadataList);
+        String relationInfo = RELATION_TAG.concat(" " + datSetName);
+        String attributeInfo = getAttributeInfo(metadataList);
         String dataInfo = getDataInfo(dataStream);
 
         writeFile(args[1], headerInfo, relationInfo, attributeInfo, dataInfo);
@@ -53,7 +58,7 @@ public class ARFFConverter {
 
         for (String line : metadata) {
             if (!line.contains("Attribute")) {
-                headerLines.append(COMMENT_SYMBOL.concat(line));
+                headerLines.append(COMMENT_SYMBOL.concat(line)).append("\n");
             } else {
                 break;
             }
@@ -65,13 +70,22 @@ public class ARFFConverter {
     private static String getAttributeInfo(List<String> metadata) {
         StringBuilder formattedAttributes = new StringBuilder();
         formattedAttributes.append(ATTRIBUTE_TAG).append("\n");
+        Iterator<String> iterator = metadata.iterator();
 
-        for(String line : metadata) {
-
+        while (iterator.hasNext()) {
+            if (iterator.next().contains("Attribute Information")) {
+                iterator.forEachRemaining(line -> {
+                    if (line.contains("Classification index")) {
+                        String[] split = line.split(":\\s");
+                        classIndex = Integer.parseInt(split[split.length -1]);
+                    } else if (!line.isEmpty()) {
+                        formattedAttributes.append(ATTRIBUTE_TAG.concat(" ").concat(line)).append("\n");
+                    }
+                });
+                return formattedAttributes.toString();
+            }
         }
-        // TODO: Format attributes, set class index
-
-        return formattedAttributes.toString();
+        return null;
     }
 
     private static String getDataInfo(Stream<String> data) {

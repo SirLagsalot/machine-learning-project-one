@@ -12,16 +12,15 @@
         (c) Date: September, 1987
 
 3.  Attribute Information:
-        Number of attributes: 10
         Classification index: 10
-
-        Id number: {1 to 214}
-        Refractive index: Real
-        Na: % Mass
-        Mg: % Mass
-        Al: % Mass
-        Si: % Mass
-        K:  % Mass
-        Ca: % Mass
-        Ba: % Mass
-        Fe: % Mass
+        
+        ID  numeric
+        RI  numeric
+        Na  numeric
+        Mg  numeric
+        Al  numeric
+        Si  numeric
+        K   numeric
+        Ca  numeric
+        Ba  numeric
+        Fe  numeric
