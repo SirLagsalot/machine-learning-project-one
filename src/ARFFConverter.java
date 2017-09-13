@@ -1,7 +1,8 @@
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -23,6 +24,9 @@ public class ARFFConverter {
      * args[1]: Output file path
      */
     public static void main(String[] args) {
+        assert args[0] != null;
+        assert args[1] != null;
+
         File metadataFile = new File(args[0].concat(".metadata"));
         File dataFile = new File(args[0].concat(".data"));
 
@@ -33,15 +37,18 @@ public class ARFFConverter {
         assert dataStream != null;
 
         String[] dataSetPath = args[0].split("/");
-        String datSetName = dataSetPath[dataSetPath.length -1];
+        String datSetName = dataSetPath[dataSetPath.length - 1];
 
         List<String> metadataList = metaDataStream.collect(Collectors.toList());
+
         String headerInfo = getHeaderInfo(metadataList);
-        String relationInfo = RELATION_TAG.concat(" " + datSetName);
+        String relationInfo = RELATION_TAG.concat(" ").concat(datSetName).concat("\n");
         String attributeInfo = getAttributeInfo(metadataList);
         String dataInfo = getDataInfo(dataStream);
 
-        writeFile(args[1], headerInfo, relationInfo, attributeInfo, dataInfo);
+        String outputPath = args[1] != null ? args[1] : "";
+
+        writeFile(outputPath, Arrays.asList(headerInfo, relationInfo, attributeInfo, dataInfo));
     }
 
     private static Stream<String> getFileStream(File file) {
@@ -63,13 +70,11 @@ public class ARFFConverter {
                 break;
             }
         }
-
         return headerLines.toString();
     }
 
     private static String getAttributeInfo(List<String> metadata) {
         StringBuilder formattedAttributes = new StringBuilder();
-        formattedAttributes.append(ATTRIBUTE_TAG).append("\n");
         Iterator<String> iterator = metadata.iterator();
 
         while (iterator.hasNext()) {
@@ -77,8 +82,8 @@ public class ARFFConverter {
                 iterator.forEachRemaining(line -> {
                     if (line.contains("Classification index")) {
                         String[] split = line.split(":\\s");
-                        classIndex = Integer.parseInt(split[split.length -1]);
-                    } else if (!line.isEmpty()) {
+                        classIndex = Integer.parseInt(split[split.length - 1]);
+                    } else if (line.trim().length() > 0) {
                         formattedAttributes.append(ATTRIBUTE_TAG.concat(" ").concat(line)).append("\n");
                     }
                 });
@@ -104,7 +109,7 @@ public class ARFFConverter {
      */
     private static String convertLineToARFF(String line) {
         Pattern splitRegex = Pattern.compile(",|\t|\\s");
-        List<String> attributes = Arrays.asList(splitRegex.split(line));
+        ArrayList<String> attributes = new ArrayList<>(Arrays.asList(splitRegex.split(line)));
         String classification = attributes.remove(classIndex);
 
         StringBuilder arffLine = new StringBuilder();
@@ -117,9 +122,13 @@ public class ARFFConverter {
         return arffLine.toString();
     }
 
-    private static void writeFile(String path, String... fileSections) {
-        for (String section : fileSections) {
-            System.out.println(section);
+    private static void writeFile(String outputPath, List<String> lines) {
+        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(outputPath))) {
+            writer.write(lines.stream()
+                    .reduce((sum, currLine) -> sum + "\n" + currLine)
+                    .orElseGet(null));
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
 }

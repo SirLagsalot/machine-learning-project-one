@@ -1,0 +1,20 @@
+1.  Title:
+        Tic-Tac-Toe Endgame
+
+2.  Sources:
+        (a) Creator: David W. Aha (aha@cs.jhu.edu)
+        (b) Donor: David W. Aha (aha@cs.jhu.edu)
+        (c) Date: 19 August 1991
+
+3.  Attribute Information:
+        Classification index: 0
+
+        mcg numeric
+        gvh numeric
+        alm numeric
+        mit numeric
+        erl numeric
+        pox numeric
+        vac numeric
+        nuc numeric
+        class {CYT, NUC, MIT, ME3, ME2, ME1, EXC, VAC, POX, ERL}

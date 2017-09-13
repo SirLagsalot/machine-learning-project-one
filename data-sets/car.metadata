@@ -1,17 +1,18 @@
-1. Title:
-    Car Evaluation
+1.  Title:
+        Car Evaluation
 
-2. Source:
+2.  Source:
         (a) Creator: Marko Bohanec
         (b) Donors: Marko Bohanec, Blaz Zupan
         (c) Date: June, 1997
 
-3. Attribute Information:
-    Classification index: 6
+3.  Attribute Information:
+        Classification index: 6
 
-    buying   {v-high, high, med, low}
-    maint    {v-high, high, med, low}
-    doors    {2, 3, 4, 5-more}
-    persons  {2, 4, more}
-    lug_boot {small, med, big}
-    safety   {low, med, high}
+        buying   {v-high, high, med, low}
+        maint    {v-high, high, med, low}
+        doors    {2, 3, 4, 5-more}
+        persons  {2, 4, more}
+        lug_boot {small, med, big}
+        safety   {low, med, high}
+        class    {unacc, acc, good, v-good}
