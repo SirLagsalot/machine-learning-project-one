@@ -108,7 +108,7 @@ public class ARFFConverter {
         Outputs a line formatted as comma separated attribute values followed by the classification
      */
     private static String convertLineToARFF(String line) {
-        Pattern splitRegex = Pattern.compile(",|\t|\\s");
+        Pattern splitRegex = Pattern.compile(",|\\t|(\\s)+");
         ArrayList<String> attributes = new ArrayList<>(Arrays.asList(splitRegex.split(line)));
         String classification = attributes.remove(classIndex);
 
