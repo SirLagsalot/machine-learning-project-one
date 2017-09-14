@@ -1,6 +1,5 @@
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class ARFFConverter {
@@ -17,7 +17,7 @@ public class ARFFConverter {
     private static final String RELATION_TAG = "@RELATION";
     private static final String COMMENT_SYMBOL = "% ";
 
-    private static int classIndex = -1;
+    private static List<Integer> classIndices = new ArrayList<>();
 
     /**
      * args[0]: Name of data set without file extension
@@ -80,9 +80,9 @@ public class ARFFConverter {
         while (iterator.hasNext()) {
             if (iterator.next().contains("Attribute Information")) {
                 iterator.forEachRemaining(line -> {
-                    if (line.contains("Classification index")) {
-                        String[] split = line.split(":\\s");
-                        classIndex = Integer.parseInt(split[split.length - 1]);
+                    if (line.toLowerCase().contains("Classification index".toLowerCase())) {
+                        String[] indices = line.split(":\\s");
+                        Arrays.asList(indices[indices.length - 1].split(",")).forEach(index -> classIndices.add(Integer.parseInt(index)));
                     } else if (line.trim().length() > 0) {
                         formattedAttributes.append(ATTRIBUTE_TAG.concat(" ").concat(line)).append("\n");
                     }
@@ -108,16 +108,26 @@ public class ARFFConverter {
         Outputs a line formatted as comma separated attribute values followed by the classification
      */
     private static String convertLineToARFF(String line) {
-        Pattern splitRegex = Pattern.compile(",|\\t|(\\s)+");
+        Pattern splitRegex = Pattern.compile(",|,\\s|(\\t)+|(\\s)+");
         ArrayList<String> attributes = new ArrayList<>(Arrays.asList(splitRegex.split(line)));
-        String classification = attributes.remove(classIndex);
+
+        ArrayList<String> classifications = new ArrayList<>();
+        final int[] offset = {0};
+        classIndices.forEach(index -> {
+            classifications.add(attributes.remove(index - offset[0]));
+            offset[0]++;
+        });
 
         StringBuilder arffLine = new StringBuilder();
-        attributes.forEach(attr -> {
-            arffLine.append(attr);
-            arffLine.append(", ");
+
+        attributes.forEach(attr -> arffLine.append(attr.concat(", ")));
+
+        IntStream.range(0, classifications.size()).forEachOrdered(i -> {
+            arffLine.append(classifications.get(i));
+            if (i < classifications.size() - 1) {
+                arffLine.append(", ");
+            }
         });
-        arffLine.append(classification);
 
         return arffLine.toString();
     }
