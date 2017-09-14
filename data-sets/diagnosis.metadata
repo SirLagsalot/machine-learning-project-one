@@ -8,7 +8,7 @@
             Laboratory of Intelligent Systems
 
 3.  Attribute Information:
-        Classification index: 6,7
+        Classification index: 6
 
         Temperature of patient:     numeric
         Occurrence of nausea:       {yes, no}
@@ -16,5 +16,4 @@
         Urine pushing:              {yes, no}
         Micturition pains:          {yes, no}
         Burning, itch, swelling:    {yes, no}
-        class                       {yes, no}
         class                       {yes, no}
