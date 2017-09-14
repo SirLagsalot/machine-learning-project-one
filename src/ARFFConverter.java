@@ -10,12 +10,25 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+
+/*
+    File converter for building .arff files given a file of metadata information
+    and a file containing a comma, space, or tab separated list of data points.
+
+    Authors: Zach Connelly, Karen Stengel, Keely Weisbeck
+    Date: 14 September 2017
+    Class: CSCI 447 Machine Learning
+    Professor: Dr. John Sheppard
+ */
+
 public class ARFFConverter {
 
     private static final String ATTRIBUTE_TAG = "@ATTRIBUTE";
     private static final String DATA_TAG = "@DATA";
     private static final String RELATION_TAG = "@RELATION";
     private static final String COMMENT_SYMBOL = "% ";
+    private static final String COMMA_SEP = ", ";
+    private static final Pattern DATA_DELIMITER = Pattern.compile(",|,\\s|(\\t)+|(\\s)+");
 
     private static List<Integer> classIndices = new ArrayList<>();
 
@@ -78,7 +91,7 @@ public class ARFFConverter {
         Iterator<String> iterator = metadata.iterator();
 
         while (iterator.hasNext()) {
-            if (iterator.next().contains("Attribute Information")) {
+            if (iterator.next().toLowerCase().contains("Attribute Information".toLowerCase())) {
                 iterator.forEachRemaining(line -> {
                     if (line.toLowerCase().contains("Classification index".toLowerCase())) {
                         String[] indices = line.split(":\\s");
@@ -108,8 +121,7 @@ public class ARFFConverter {
         Outputs a line formatted as comma separated attribute values followed by the classification
      */
     private static String convertLineToARFF(String line) {
-        Pattern splitRegex = Pattern.compile(",|,\\s|(\\t)+|(\\s)+");
-        ArrayList<String> attributes = new ArrayList<>(Arrays.asList(splitRegex.split(line)));
+        ArrayList<String> attributes = new ArrayList<>(Arrays.asList(DATA_DELIMITER.split(line)));
 
         ArrayList<String> classifications = new ArrayList<>();
         final int[] offset = {0};
@@ -120,12 +132,12 @@ public class ARFFConverter {
 
         StringBuilder arffLine = new StringBuilder();
 
-        attributes.forEach(attr -> arffLine.append(attr.concat(", ")));
+        attributes.forEach(attr -> arffLine.append(attr.concat(COMMA_SEP)));
 
         IntStream.range(0, classifications.size()).forEachOrdered(i -> {
             arffLine.append(classifications.get(i));
             if (i < classifications.size() - 1) {
-                arffLine.append(", ");
+                arffLine.append(COMMA_SEP);
             }
         });
 
