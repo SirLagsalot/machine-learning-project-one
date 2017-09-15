@@ -11,8 +11,8 @@
 
 @ATTRIBUTE         buying   {v-high, high, med, low}
 @ATTRIBUTE         maint    {v-high, high, med, low}
-@ATTRIBUTE         doors    numeric
-@ATTRIBUTE         persons  numeric
+@ATTRIBUTE         doors    {2, 3, 4, 5more}
+@ATTRIBUTE         persons  {2, 4, more}
 @ATTRIBUTE         lug_boot {small, med, big}
 @ATTRIBUTE         safety   {low, med, high}
 @ATTRIBUTE         class    {unacc, acc, good, v-good}
