@@ -10,12 +10,12 @@
 
 @RELATION diagnosis
 
-@ATTRIBUTE         Temperature of patient:     numeric
-@ATTRIBUTE         Occurrence of nausea:       {yes, no}
-@ATTRIBUTE         Lumbar pain:                {yes, no}
-@ATTRIBUTE         Urine pushing:              {yes, no}
-@ATTRIBUTE         Micturition pains:          {yes, no}
-@ATTRIBUTE         Burning, itch, swelling:    {yes, no}
+@ATTRIBUTE         "Temperature of patient"    numeric
+@ATTRIBUTE         "Occurrence of nausea"      {yes, no}
+@ATTRIBUTE         "Lumbar pain"               {yes, no}
+@ATTRIBUTE         "Urine pushing"             {yes, no}
+@ATTRIBUTE         "Micturition pains"         {yes, no}
+@ATTRIBUTE         "Burning, itch, swelling"   {yes, no}
 @ATTRIBUTE         class                       {yes, no}
 
 @DATA

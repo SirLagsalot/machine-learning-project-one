@@ -10,10 +10,10 @@
 3.  Attribute Information:
         Classification index: 6
 
-        Temperature of patient:     numeric
-        Occurrence of nausea:       {yes, no}
-        Lumbar pain:                {yes, no}
-        Urine pushing:              {yes, no}
-        Micturition pains:          {yes, no}
-        Burning, itch, swelling:    {yes, no}
+        "Temperature of patient"    numeric
+        "Occurrence of nausea"      {yes, no}
+        "Lumbar pain"               {yes, no}
+        "Urine pushing"             {yes, no}
+        "Micturition pains"         {yes, no}
+        "Burning, itch, swelling"   {yes, no}
         class                       {yes, no}
